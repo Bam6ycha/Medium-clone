@@ -2,15 +2,58 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreatePostInput {
+  content: String!
+  title: String!
+  userId: Int!
+}
+
+type CreatePostResponse {
+  content: String!
+  id: Int!
+  title: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  role: String!
+  username: String!
+}
+
+type CreateUserResponse {
+  accessToken: String!
+  refreshToken: String!
+  user: UserEntity!
+}
+
+input GetAllPostsInput {
+  cursor: Int!
+  limit: Int!
+}
+
+input GetUserPostsInput {
+  cursor: Int!
+  limit: Int!
+  userId: Int!
+}
+
+input GetUsersInput {
+  limit: Int!
+  offset: Int!
+}
+
 type LogoutResponse {
   loggedOut: Boolean!
 }
 
 type Mutation {
+  createPost(createPostInput: CreatePostInput!): CreatePostResponse!
+  createUser(createUserInput: CreateUserInput!): CreateUserResponse!
   getTokens: NewTokensResponse!
   logout(id: Int!): LogoutResponse!
   signIn(signInInput: SignInInput!): SignResponse!
-  signup(signUpInput: SignUpInput!): SignResponse!
+  viewPost(viewPostInput: ViewPostInput!): PostEntity!
 }
 
 type NewTokensResponse {
@@ -18,7 +61,18 @@ type NewTokensResponse {
   refreshToken: String!
 }
 
+type PostEntity {
+  content: String!
+  id: Int!
+  title: String!
+  viewers: [UserEntity!]!
+}
+
 type Query {
+  getAllPosts(getAllPostsInput: GetAllPostsInput!): [PostEntity!]!
+  getUser(id: Int!): UserEntity!
+  getUserPosts(getUserPostsInput: GetUserPostsInput!): [PostEntity!]!
+  getUsers(getUsersInput: GetUsersInput!): [UserEntity!]!
   helloWorld: String!
 }
 
@@ -33,16 +87,14 @@ type SignResponse {
   user: UserEntity!
 }
 
-input SignUpInput {
-  email: String!
-  password: String!
-  role: String!
-  username: String!
-}
-
 type UserEntity {
   email: String!
   id: Int!
   name: String!
   role: String!
+}
+
+input ViewPostInput {
+  id: Int!
+  userId: Int!
 }

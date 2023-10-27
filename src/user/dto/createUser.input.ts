@@ -3,7 +3,7 @@ import { UserRole } from '@prisma/client';
 import { IsString, IsNotEmpty, IsIn, IsEmail } from 'class-validator';
 
 @InputType()
-export class SignUpInput {
+export class CreateUserInput {
   @IsNotEmpty()
   @IsString()
   @Field()

@@ -25,7 +25,7 @@ model Post {
   id      Int    @id @default(autoincrement())
   title   String
   content String
-  author  User   @relation("author", references: [id], fields: [userId])
+  author  User   @relation("author", references: [id], fields: [userId], onDelete: Cascade)
   viewers User[] @relation("viewers")
   userId  Int
 }

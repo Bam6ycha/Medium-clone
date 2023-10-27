@@ -5,14 +5,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { SignUpInput } from './dto/signUp-input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { hash, verify } from 'argon2';
 import { UserRole } from '@prisma/client';
-import { SignResponse } from './dto/sign-response';
 import { SignInInput } from './dto/signIn-input';
+import { SignResponse } from './dto/signIn-response';
 
 @Injectable()
 export class AuthService {
@@ -22,33 +21,6 @@ export class AuthService {
     private jswService: JwtService,
     private configService: ConfigService,
   ) {}
-
-  public async signUp({
-    password,
-    email,
-    username,
-    role,
-  }: SignUpInput): Promise<SignResponse> {
-    try {
-      const passwordHash = await hash(password);
-
-      const newUser = await this.prisma.user.create({
-        data: { passwordHash, email, name: username, role },
-      });
-
-      const { accessToken, refreshToken } = this.createTokens(
-        newUser.id,
-        newUser.email,
-        newUser.role,
-      );
-
-      await this.updateRefreshToken(newUser.id, refreshToken);
-
-      return { accessToken, refreshToken, user: newUser };
-    } catch (error: unknown) {
-      this.logger.error((error as Error).message);
-    }
-  }
 
   public async signIn({ email, password }: SignInInput): Promise<SignResponse> {
     try {
@@ -67,6 +39,7 @@ export class AuthService {
       const { accessToken, refreshToken } = this.createTokens(
         user.id,
         user.email,
+        user.role,
       );
 
       return { accessToken, refreshToken, user };
@@ -114,14 +87,14 @@ export class AuthService {
     }
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToke } =
-      this.createTokens(user.id, user.email);
+      this.createTokens(user.id, user.email, user.role);
 
     await this.updateRefreshToken(user.id, refreshToken);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToke };
   }
 
-  private createTokens(
+  public createTokens(
     userId: number,
     email: string,
     role: UserRole = 'user',
@@ -129,8 +102,8 @@ export class AuthService {
     const tokenARGS = { userId, email, role };
 
     const accessToken = this.jswService.sign(tokenARGS, {
-      expiresIn: '15s',
-      secret: this.configService.get('ACS_TOKEN_SECRET'),
+      expiresIn: '1d',
+      secret: this.configService.get('ACCESS_TOKEN_SECRET'),
     });
 
     const refreshToken = this.jswService.sign(tokenARGS, {
@@ -141,7 +114,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  private async updateRefreshToken(userId: number, refreshToken: string) {
+  public async updateRefreshToken(userId: number, refreshToken: string) {
     try {
       const refreshTokenHash = await hash(refreshToken);
 

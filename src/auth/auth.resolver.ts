@@ -1,7 +1,5 @@
 import { Resolver, Mutation, Args, Int, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { SignUpInput } from './dto/signUp-input';
-import { SignResponse } from './dto/sign-response';
 import { SignInInput } from './dto/signIn-input';
 import { LogoutResponse } from './dto/logout-response';
 import { Public } from './decorators/public.decorator';
@@ -10,6 +8,7 @@ import { CurrentUser } from './decorators/currentUser.decorator';
 import { CurrentUserId } from './decorators/currentUserId.decorator';
 import { UseGuards } from '@nestjs/common';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
+import { SignResponse } from './dto/signIn-response';
 
 @Resolver()
 export class AuthResolver {
@@ -18,12 +17,6 @@ export class AuthResolver {
   @Query(() => String)
   private helloWorld() {
     return 'Hello, World!';
-  }
-
-  @Public()
-  @Mutation(() => SignResponse)
-  private signup(@Args('signUpInput') signUpInput: SignUpInput) {
-    return this.authService.signUp(signUpInput);
   }
 
   @Public()
@@ -37,9 +30,9 @@ export class AuthResolver {
     return this.authService.logout(id);
   }
 
+  @Mutation(() => NewTokensResponse)
   @UseGuards(RefreshTokenGuard)
   @Public()
-  @Mutation(() => NewTokensResponse)
   private getTokens(
     @CurrentUserId() userId: number,
     @CurrentUser('refreshToken') refreshToken: string,
