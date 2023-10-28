@@ -16,19 +16,17 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => [UserEntity])
-  private getUsers(@Args('getUsersInput') getUsersInput: GetUsersInput) {
+  public getUsers(@Args('getUsersInput') getUsersInput: GetUsersInput) {
     return this.userService.getUsers(getUsersInput);
   }
 
   @Query(() => UserEntity)
-  private getUser(@Args('id', { type: () => Int }) id: number) {
+  public getUser(@Args('id', { type: () => Int }) id: number) {
     return this.userService.getUser(id);
   }
 
   @Mutation(() => CreateUserResponse)
-  private createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-  ) {
+  public createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.createUser(createUserInput);
   }
 }

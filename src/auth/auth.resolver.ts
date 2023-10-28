@@ -15,25 +15,25 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
-  private helloWorld() {
+  public helloWorld() {
     return 'Hello, World!';
   }
 
   @Public()
   @Mutation(() => SignResponse)
-  private signIn(@Args('signInInput') signInInput: SignInInput) {
+  public signIn(@Args('signInInput') signInInput: SignInInput) {
     return this.authService.signIn(signInInput);
   }
 
   @Mutation(() => LogoutResponse)
-  private logout(@Args('id', { type: () => Int }) id: number) {
+  public logout(@Args('id', { type: () => Int }) id: number) {
     return this.authService.logout(id);
   }
 
   @Mutation(() => NewTokensResponse)
   @UseGuards(RefreshTokenGuard)
   @Public()
-  private getTokens(
+  public getTokens(
     @CurrentUserId() userId: number,
     @CurrentUser('refreshToken') refreshToken: string,
   ) {

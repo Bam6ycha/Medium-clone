@@ -12,26 +12,24 @@ export class PostResolver {
   constructor(private postService: PostService) {}
 
   @Mutation(() => CreatePostResponse)
-  private createPost(
-    @Args('createPostInput') createPostInput: CreatePostInput,
-  ) {
+  public createPost(@Args('createPostInput') createPostInput: CreatePostInput) {
     return this.postService.createPost(createPostInput);
   }
 
   @Mutation(() => PostEntity)
-  private viewPost(@Args('viewPostInput') viewPostInput: ViewPostInput) {
+  public viewPost(@Args('viewPostInput') viewPostInput: ViewPostInput) {
     return this.postService.viewPost(viewPostInput);
   }
 
   @Query(() => [PostEntity])
-  private getUserPosts(
+  public getUserPosts(
     @Args('getUserPostsInput') getUserPostsInput: GetUserPostsInput,
   ) {
     return this.postService.getUserPosts(getUserPostsInput);
   }
 
   @Query(() => [PostEntity])
-  private getAllPosts(
+  public getAllPosts(
     @Args('getAllPostsInput') getAllPostsInput: GetAllPostsInput,
   ) {
     return this.postService.getAllPosts(getAllPostsInput);

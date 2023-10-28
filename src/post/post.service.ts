@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostInput } from './dto/createPost.input';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { GetUserPostsInput } from './dto/getUserPosts.input';
