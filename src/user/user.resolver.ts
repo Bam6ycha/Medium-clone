@@ -11,7 +11,7 @@ import { CreateUserInput } from './dto/createUser.input';
 
 @Resolver()
 @UseGuards(RolesGuard)
-@UserRoles(UserRole.user)
+@UserRoles(UserRole.admin)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 

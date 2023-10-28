@@ -42,6 +42,8 @@ export class AuthService {
         user.role,
       );
 
+      await this.updateRefreshToken(user.id, refreshToken);
+
       return { accessToken, refreshToken, user };
     } catch (error: unknown) {
       this.logger.error((error as Error).message);

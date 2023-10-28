@@ -1,9 +1,46 @@
 services:
-  db:
-    image: postgres:latest
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+    env_file:
+      - .env
+    ports:
+      - '8080:3000'
+    networks:
+      - app
+    restart: always
+
+  postgres:
+    image: bitnami/postgresql
     ports:
       - '5432:5432'
+    env_file:
+      - .env
+    networks:
+      - app
+    restart: always
+
+  prisma-studio:
+    depends_on:
+      - postgres
+    container_name: prisma-studio
+    image: timothyjmiller/prisma-studio:latest
+    restart: unless-stopped
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=dbpassword
-      - POSTGRES_DB=test_task
+      POSTGRES_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+    command: ['prisma', 'studio']
+    env_file:
+      - .env
+    networks:
+      - app
+    ports:
+      - 5555:5555
+
+networks:
+  app:
+    driver: bridge
